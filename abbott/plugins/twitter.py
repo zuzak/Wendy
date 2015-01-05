@@ -70,7 +70,6 @@ class Twitter(CommandPluginSuperclass):
         super(Twitter, self).reload()
         self.tweets_processed.clear()
 
-    @defer.inlineCallbacks
     def on_event_irc_on_privmsg(self, event):
         super(Twitter, self).on_event_irc_on_privmsg(event)
 
