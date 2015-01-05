@@ -76,10 +76,6 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
         self.started = False
         self.timer = None
 
-        # Keeps track of the last x times that the !odds command was issued.
-        # Will only do so many in a minute to prevent spam
-        self.last_odds = deque(maxlen=3)
-
         super(VoiceOfTheDay, self).__init__(*args)
 
     def start(self):
@@ -537,15 +533,6 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
         event._was_odds = True
         user = match.groupdict()['user']
 
-        # The following is a bit of code to throttle the amount the bot will spam the channel.
-        # If too many people ask for odds within some time threshold, the bot will start replying
-        # in private messages
-        if len(self.last_odds) == self.last_odds.maxlen and time.time() - self.last_odds[0] < 60:
-            reply_opts = {"notice": True, "direct": True}
-        else:
-            reply_opts = {}
-        self.last_odds.append(time.time())
-
         # odds requested with no optional parameter, assume it's for the requesting user
         if not user:
             user = event.user.split("!")[0]
@@ -588,6 +575,5 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
 
         my_ecount = self.config['counter'][user] * self.config['multipliers'][user] * self.config['scalefactor']
         my_chances = int(my_ecount) / total * 100
-        event.reply(u"{1} {0:.2f}% with {2} points and a multiplier of {3:.3f}".format(my_chances, msg, self.config['counter'][user], self.config['multipliers'][user]),
-                **reply_opts)
-        event.reply(msg2, **reply_opts)
+        event.reply(notice=True, direct=True, msg=u"{1} {0:.2f}% with {2} points and a multiplier of {3:.3f}".format(my_chances, msg, self.config['counter'][user], self.config['multipliers'][user]))
+        event.reply(notice=True, direct=True, msg=msg2)
