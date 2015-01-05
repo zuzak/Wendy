@@ -181,7 +181,7 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
         else:
             say("Starting the Word of the Day game!")
         yield self.wait_for(timeout=2)
-        say("Guess the word of the day and receive a hat! (no spamming)")
+        say("Guess the word of the day and receive a hat!")
 
         # Choose a new word
         self.config['theword'] = random.choice(self.words)
@@ -268,4 +268,3 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
             self.config['winners'].remove(oldnick)
             self.config['winners'].append(newnick)
             self.config.save()
-
