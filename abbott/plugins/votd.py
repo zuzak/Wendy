@@ -429,11 +429,6 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
         yield self.transport.issue_request("ircop.voice", channel, winner)
         self.config['currentvoice'] = winner
         self.config.save()
-        yield self.wait_for(timeout=5)
-        extra = self.config.get("extra", "until next time...").split("\n")
-        for l in extra:
-            say(l.format(winner=winner))
-            yield self.wait_for(timeout=2)
 
         self._set_timer()
 
