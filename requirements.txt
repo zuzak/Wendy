@@ -5,12 +5,16 @@ cffi==0.8.6
 cryptography==0.7.1
 enum34==1.0.4
 httplib2==0.9
+oauthlib==0.7.2
 parsedatetime==1.4
 pretty==0.1
 pyOpenSSL==0.14
 pyasn1==0.1.7
 pycparser==2.10
 python-googl==0.2.2
-six==1.9.0
+requests==2.4.3
+requests-oauthlib==0.4.1
+six==1.7.3
+tweepy==3.1.0
 wsgiref==0.1.2
 zope.interface==4.1.2
