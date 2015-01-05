@@ -390,7 +390,7 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
         # do this here because we use this value below
         self.config["win_counter"][winner] += 1
 
-        say("{phrase} {0:.2f}%{otherphrase}".format(
+        say("{phrase} {0:.2f}%{otherphrase} {winner}!".format(
                 winner_chance,
                 phrase=
                        (lambda sorted_chance:
@@ -417,9 +417,9 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
                                 ", presenting the winner and runner-up in all-time wins with {0}…".format(win_count) if win_count == sorted_winners[-2] else
                                 " and {0} total wins, today the hat goes to…".format(win_count)
                         )(self.config["win_counter"][winner], sorted(self.config["win_counter"].values())),
+                
+                winner=winner
                 ))
-        yield self.wait_for(timeout=2)
-        say("{0}!".format(winner))
 
         yield self.wait_for(timeout=1)
         yield self.transport.issue_request("ircop.voice", channel, winner)
