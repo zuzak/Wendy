@@ -5,7 +5,7 @@ from .. import constants
 import re
 import tweepy
 import datetime
-
+from collections import deque
 
 def relative_date(d):
     diff = datetime.datetime.utcnow() - d
@@ -31,6 +31,7 @@ def relative_date(d):
 
 
 class Twitter(CommandPluginSuperclass):
+
     REQUIRES = ["ircop.OpProvider", "ircutil.Names"]
     DEFAULT_CONFIG = {
         "OAUTH_CONSUMER_KEY": "",  # Twitter oauth info. Get deets from https://apps.twitter.com/
@@ -40,12 +41,14 @@ class Twitter(CommandPluginSuperclass):
         "channels": None,  # Channels in which the bot should make do stuff
         "expand_urls": True,  # Whether or not to expand URLs in tweets
         "strip_media_links": True,  # Whether or not to strip out links to media (e.g. images) associated with tweet
-        "strip_newlines": True  # Strip out newlines from tweets, because they make newlines in IRC.
+        "strip_newlines": True,  # Strip out newlines from tweets, because they make newlines in IRC.
+        "dont_repeat_last_count": 5  # Don't repeat a tweet if it was already mentioned in the last N tweets.  Set N here.
     }
 
-    TWITTER_URL_REGEX = "https?://twitter\.com/(.+?)/status/([0-9]+)/?"
+    TWITTER_URL_REGEX = "https?://(www\.)?twitter\.com/(.+?)/status/([0-9]+)/?"
 
     twitter_api = None
+    tweets_processed = deque()
 
     def __init__(self, *args, **kwargs):
         super(Twitter, self).__init__(*args, **kwargs)
@@ -54,6 +57,18 @@ class Twitter(CommandPluginSuperclass):
         auth.set_access_token(self.config['OAUTH_ACCESS_TOKEN'], self.config['OAUTH_ACCESS_SECRET'])
 
         self.twitter_api = tweepy.API(auth)
+
+    def start(self):
+        super(Twitter, self).start()
+        self.tweets_processed = deque(maxlen=self.config['dont_repeat_last_count'])
+
+    def stop(self):
+        super(Twitter, self).stop()
+        self.tweets_processed.clear()
+
+    def reload(self):
+        super(Twitter, self).reload()
+        self.tweets_processed.clear()
 
     @defer.inlineCallbacks
     def on_event_irc_on_privmsg(self, event):
@@ -67,14 +82,20 @@ class Twitter(CommandPluginSuperclass):
         twitter_regex_matches = re.findall(self.TWITTER_URL_REGEX, event.message)
 
         # Turn regex groups into vararables that I can be an progreammer with.
-        for twat, tweet_id in twitter_regex_matches:
+        for _, twat, tweet_id in twitter_regex_matches:
+
+            # If we've already processed this tweet then skipperino
+            if tweet_id in self.tweets_processed:
+                continue
+
+            self.tweets_processed.append(tweet_id)
 
             # Get tweet dater
             try:
                 tweet = self.twitter_api.get_status(tweet_id)
             except tweepy.TweepError:
                 # There was an error so let's not do a FOCKEN THING.
-                return
+                continue
 
             tweet_msg = tweet.text
 
