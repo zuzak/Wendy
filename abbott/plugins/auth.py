@@ -439,10 +439,10 @@ class Auth(command.CommandPluginSuperclass):
             # Get info about the current user
             perms = set((yield self._get_permissions(event.user)))
             if self.authd_users.get(event.user, None):
-                event.reply("You are identified as %s" % self.authd_users[event.user])
+                event.reply(notice=True, direct=True, msg="You are identified as %s" % self.authd_users[event.user])
                 groups = self.config['groups'][self.authd_users[event.user]]
             else:
-                event.reply("I don't know who you are")
+                event.reply(notice=True, direct=True, msg="I don't know who you are")
                 groups = []
             msgstr = "you have"
 
@@ -457,28 +457,28 @@ class Auth(command.CommandPluginSuperclass):
 
         globalperms = perms_map.pop(None, set())
         if globalperms:
-            event.reply("%s these global permissions: %s" % (
+            event.reply(notice=True, direct=True, msg="%s these global permissions: %s" % (
                 msgstr.capitalize(), ", ".join(globalperms)))
         else:
-            event.reply("%s no global permissions =(" % (msgstr,))
+            event.reply(notice=True, direct=True, msg="%s no global permissions =(" % (msgstr,))
 
         # If this isn't a direct message, don't show all the other channels
         if event.direct:
             for perm_chan, perms in perms_map.items():
-                event.reply("In channel %s %s: %s" % (
+                event.reply(notice=True, direct=True, msg="In channel %s %s: %s" % (
                     perm_chan, msgstr,
                     ", ".join(perms)
                     ))
         elif perms_map:
             this_chan = perms_map.pop(event.channel, None)
             if this_chan:
-                event.reply("In channel %s %s: %s" % (
+                event.reply(notice=True, direct=True, msg="In channel %s %s: %s" % (
                     event.channel, msgstr,
                     ", ".join(this_chan)
                     ))
 
             if perms_map:
-                event.reply("Also, %s some permissions in other channels. (Ask me in private to see them)" %
+                event.reply(notice=True, direct=True, msg="Also, %s some permissions in other channels. (Ask me in private to see them)" %
                         msgstr)
 
     ### Default permission callbacks
