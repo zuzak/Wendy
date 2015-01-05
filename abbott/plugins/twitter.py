@@ -113,7 +113,7 @@ class Twitter(CommandPluginSuperclass):
                 tweet_msg = tweet_msg.replace('\n', ' ')
 
             # Construct the message to send to IRC
-            irc_message = "{BOLD}{COLOUR}{NAVY_BLUE}{tweet_author}{NORMAL} tweeted {COLOUR}{GREEN}{tweet_date}{NORMAL}: {COLOUR}{DARK_GRAY}{tweet_msg}".format(
+            irc_message = u"{BOLD}{COLOUR}{NAVY_BLUE}{tweet_author}{NORMAL} tweeted {COLOUR}{GREEN}{tweet_date}{NORMAL}: {COLOUR}{DARK_GRAY}{tweet_msg}".format(
                 tweet_author=tweet.author.screen_name,
                 tweet_date=relative_date(tweet.created_at),
                 tweet_msg=tweet_msg,
