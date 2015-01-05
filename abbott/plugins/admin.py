@@ -252,7 +252,7 @@ class IRCAdmin(EventWatcher, CommandPluginSuperclass):
                 argmatch = "(?P<nick>[^ ]+)( (?P<reason>.*))?$",
                 permission="irc.op.kick",
                 callback=self.kick,
-                #deniedcallback=self.kickself,
+                deniedcallback=self.kickself,
                 helptext="Kicks a user from the current channel")
 
         # Op commands
@@ -521,7 +521,7 @@ class IRCAdmin(EventWatcher, CommandPluginSuperclass):
         targetnick = match.groupdict()['nick']
         requestor = event.user.split("!")[0]
 
-        if targetnick == requestor:
+        if targetnick == "me" or targetnick.lower() == requestor.lower():
             self.transport.issue_request("ircop.kick", channel=event.channel,
                 target=requestor, reason="okay, you asked for it")
             return True
