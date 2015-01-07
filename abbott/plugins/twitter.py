@@ -6,6 +6,7 @@ import re
 import tweepy
 import datetime
 from collections import deque
+from HTMLParser import HTMLParser
 
 def relative_date(d):
     diff = datetime.datetime.utcnow() - d
@@ -96,7 +97,7 @@ class Twitter(CommandPluginSuperclass):
                 # There was an error so let's not do a FOCKEN THING.
                 continue
 
-            tweet_msg = tweet.text
+            tweet_msg = HTMLParser().unescape(tweet.text)
 
             # Expand links in tweet
             if self.config['expand_urls']:
