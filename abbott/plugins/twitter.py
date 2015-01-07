@@ -33,7 +33,6 @@ def relative_date(d):
 
 class Twitter(CommandPluginSuperclass):
 
-    REQUIRES = ["ircop.OpProvider", "ircutil.Names"]
     DEFAULT_CONFIG = {
         "OAUTH_CONSUMER_KEY": "",  # Twitter oauth info. Get deets from https://apps.twitter.com/
         "OAUTH_CONSUMER_SECRET": "",
