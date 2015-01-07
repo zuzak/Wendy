@@ -40,7 +40,7 @@ class MPDProtocol(LineOnlyReceiver):
     def issue_command(self, command):
         """Issues a command and returns a deferred object with the results of
         that command
-        
+
         """
         if self.current_deferred:
             raise RuntimeError("Cannot issue more than one command at once")

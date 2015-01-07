@@ -212,7 +212,7 @@ class Names(CommandPluginSuperclass):
 
         event.reply("NAMES info for {0}: {1}".format(channel, info))
 
-        
+
 class ReplyInserter(CommandPluginSuperclass):
     """This plugin's function is to insert a reply() function to each incoming
     irc.on_privmsg event. It is required for a lot of functionality, including
@@ -282,7 +282,7 @@ class ReplyInserter(CommandPluginSuperclass):
                 eventname = "irc.do_msg"
 
             nick = event.user.split("!",1)[0]
-            
+
             # In addition to if it was explicitly requested, send the response
             # "direct" if the incoming response was sent direct to us
             direct = direct or event.direct
@@ -309,7 +309,7 @@ class HasOp(BotPlugin):
     """A simple plugin to determine if the bot has OP in a channel or not.
     Also fires an event irc.hasop.acquired when op is acquired (no matter the
     source)
-    
+
     """
     REQUIRES = ["ircutil.Names"]
     def start(self):
@@ -370,7 +370,7 @@ class HasOp(BotPlugin):
 
 class ChanMode(EventWatcher, BotPlugin):
     """A simple plugin that provides channel mode information to other channels
-    
+
     """
     REQUIRES = []
     def start(self):
@@ -403,7 +403,7 @@ class ChanMode(EventWatcher, BotPlugin):
 
         reply = (yield self.wait_for(Event("irc.on_unknown", command="RPL_CHANNELMODEIS"),
                 timeout=5))
-        
+
         if not reply:
             raise Exception("no response from server")
 

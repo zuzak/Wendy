@@ -157,7 +157,7 @@ ADDITIONAL_GLOBALS = dict((x,__import__(x)) for x in [
     "random",
     "itertools",
     "hashlib",
-    
+
     ])
 
 class UnsafeCode(Exception):
@@ -168,7 +168,7 @@ class SafetyChecker(ast.NodeVisitor):
         if isinstance(node, ast.Attribute):
             if node.attr.startswith("_"):
                 raise UnsafeCode("Attribute %s is not allowed" % node.attr)
-        
+
         # recurse to sub-nodes
         self.generic_visit(node)
 
@@ -198,6 +198,6 @@ def safeeval(evalstr, safe=False):
 
     # And a few handy, safe modules
     scope.update(ADDITIONAL_GLOBALS)
-    
+
     return eval(codeobj, scope, scope)
 

@@ -451,7 +451,7 @@ class CommandPluginSuperclass(BotPlugin):
             # their authname.
             nickmaps = self.pluginboss.config.get("command", {}).get("nickmaps", {})
             nick = nickmaps.get(nick, nick)
-            
+
             authplugin = self.pluginboss.loaded_plugins['auth.Auth']
             from .plugins.auth import satisfies
             if nick in authplugin.permissions and authplugin.permissions[nick]:

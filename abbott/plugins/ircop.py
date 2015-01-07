@@ -190,7 +190,7 @@ class OpProvider(EventWatcher, BotPlugin):
 
     def reload(self):
         super(OpProvider, self).reload()
-        
+
         # Keeps a mapping of channels to a dict mapping operations to connectors.
         self.config["opmethod"] = defaultdict(dict, self.config["opmethod"])
 
@@ -270,7 +270,7 @@ class OpProvider(EventWatcher, BotPlugin):
         _do_become_op().
 
         Returns a deferred that fires when we deop. but it doesn't make much
-        sense to wait for it. at least not in the context of _do_become_op()       
+        sense to wait for it. at least not in the context of _do_become_op()
 
         """
         while self.op_until[channel] - time.time() > 0:
@@ -305,7 +305,7 @@ class OpProvider(EventWatcher, BotPlugin):
         along with calling this method, since a race condition may cause us to
         not deop after the buffers are processed. The extra 2 tenths of a
         second shouldn't matter much anyways.
-        
+
         This method returns no value, and returns immediately.
 
         """
@@ -325,7 +325,7 @@ class OpProvider(EventWatcher, BotPlugin):
         implemented as a separate method with inlineCallbacks so that
         _set_buffer_processor_timer() can return while this continues to wait
         asynchronously.
-        
+
         """
         while self.buffer_timer[channel] - time.time() > 0:
             yield self.wait_for(timeout=self.buffer_timer[channel] - time.time())
@@ -551,7 +551,7 @@ class OpProvider(EventWatcher, BotPlugin):
         """This is the entry point for inter-plugin requests that are handled
         by connectors (i.e. can be sent to chanserv instead of having to OP
         ourself)
-        
+
         Does one of: op, deop, voice, devoice, quiet, unquiet, or topic.
         Chooses whether to use a connector or do the operation ourself
         depending on the config or other factors.
@@ -559,7 +559,7 @@ class OpProvider(EventWatcher, BotPlugin):
         """
         # Special case for the topic operation: we do not need op if channel
         # mode +t is not set
-        if (operation == "topic" and 
+        if (operation == "topic" and
                 "t" not in (
                         yield self.transport.issue_request("irc.chanmode", channel)
                         )[0]
@@ -616,7 +616,7 @@ class OpProvider(EventWatcher, BotPlugin):
 
         mode is a two character string, where the first character is + or - and
         the second is the mode character.
-        
+
         param is the parameter, if any, or None.
 
         Results are undefined if you specify a parameter for a mode that
@@ -656,7 +656,7 @@ class OpProvider(EventWatcher, BotPlugin):
         """Tells the bot to hold op for the given duration, in seconds. The bot
         will attempt to gain OP and will not relinquish it on its own until the
         given time is up.
-        
+
         The returned deferred fires as soon as OP is acquired.
 
         """

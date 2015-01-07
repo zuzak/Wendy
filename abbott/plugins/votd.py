@@ -417,7 +417,7 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
                                 ", presenting the winner and runner-up in all-time wins with {0}…".format(win_count) if win_count == sorted_winners[-2] else
                                 " and {0} total wins, today the hat goes to…".format(win_count)
                         )(self.config["win_counter"][winner], sorted(self.config["win_counter"].values())),
-                
+
                 winner=winner
                 ))
 
@@ -508,7 +508,7 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
             if "@"+target in names:
                 event.reply("no can do")
                 return
-        
+
         if target not in names and "+"+target not in names:
             event.reply("who?")
             return
@@ -525,7 +525,7 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
                 return
 
         event.reply("Bam!")
-        
+
         self.config["currentvoice"] = target
         self.config.save()
 

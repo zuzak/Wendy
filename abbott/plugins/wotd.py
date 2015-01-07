@@ -204,7 +204,7 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
         yield self.wait_for(timeout=1)
 
         if event.channel == self.config["channel"]:
-            
+
             nick = event.user.split("!")[0]
 
             if nick in self.config['winners']:
@@ -213,7 +213,7 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
             words = set(x.strip(string.punctuation) for x in event.message.lower().split())
             if self.config['theword'] in words:
 
-                if (event.message.lower() != self.config['theword'] and 
+                if (event.message.lower() != self.config['theword'] and
                         event.message.lower() in self.winlines and
                         time.time() - self.lastwintime < 60*2):
                     # if you repeated a message verbatim by a winner from the

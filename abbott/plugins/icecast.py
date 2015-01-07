@@ -24,7 +24,7 @@ class ReceiveBody(Protocol):
         self.d.callback(self.content.getvalue())
 
 class IcecastStatus(CommandPluginSuperclass):
-    
+
     def start(self):
         super(IcecastStatus, self).start()
 
@@ -64,7 +64,7 @@ class IcecastStatus(CommandPluginSuperclass):
             table = div.nextSibling.nextSibling
             yield dict((tr.td.string[:-1], (tr.td.nextSibling.nextSibling.string or "")[:])
                     for tr in table.findAll('tr'))
-        
+
 
 
     @defer.inlineCallbacks

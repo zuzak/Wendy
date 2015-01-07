@@ -43,7 +43,7 @@ class IRCBot(irc.IRCClient):
         Also implements some rate-limiting logic.
 
         This method is also exported to other plugins as the irc.do_raw event.
-        
+
         """
         if isinstance(line, bytes):
             line = line.decode("ASCII")
@@ -113,7 +113,7 @@ class IRCBot(irc.IRCClient):
     def connectionLost(self, reason):
         """The connection is down and this object is about to be destroyed,
         so do any cleanup here.
-        
+
         """
         self.factory.client = None
         irc.IRCClient.connectionLost(self, reason)
@@ -147,7 +147,7 @@ class IRCBot(irc.IRCClient):
 
         This event has an extra attribute added: direct
         it is equal to event.channel == self.nickname
-        
+
         """
 
         self.factory.broadcast_message("irc.on_privmsg",
@@ -294,7 +294,7 @@ class IRCBotPlugin(protocol.ReconnectingClientFactory, BotPlugin):
     def broadcast_message(self, eventname, **kwargs):
         """This method is called by the client protocol object when an event
         comes in from the network
-        
+
         """
         event = Event(eventname, **kwargs)
         self.transport.send_event(event)
@@ -359,7 +359,7 @@ class IRCController(CommandPluginSuperclass):
 
     def start(self):
         super(IRCController, self).start()
-        
+
         self.install_command(
                 cmdname="join",
                 argmatch=r"(?P<channel>#+[\w-]+)$",
@@ -401,7 +401,7 @@ class IRCController(CommandPluginSuperclass):
 
     def join(self, event, match):
         channel = match.groupdict()['channel']
-        
+
         newevent = Event("irc.do_join_channel", channel=channel)
         self.transport.send_event(newevent)
 

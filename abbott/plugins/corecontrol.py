@@ -37,7 +37,7 @@ class CoreControl(CommandPluginSuperclass):
         for plugin in self.pluginboss.loaded_plugins.values():
             plugin.reload()
         event.reply("Config reloaded!")
-        
+
 class Help(CommandPluginSuperclass):
     def start(self):
         super(Help, self).start()

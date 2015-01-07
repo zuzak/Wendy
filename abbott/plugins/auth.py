@@ -99,7 +99,7 @@ class Auth(command.CommandPluginSuperclass):
     Provides a reliable set of permissions other plugins can rely on. For
     certain irc events, installs a has_permission() callback which can be used
     to query if a user has a particular permission.
-    
+
     """
     REQUIRES = ["ircutil.IRCWhois"]
     DEFAULT_CONFIG = {
@@ -246,7 +246,7 @@ class Auth(command.CommandPluginSuperclass):
         user does not have any permissions or the user could not be identified.
         It does NOT include any default permissions, only permissions
         explicitly granted to the user (along with any groups the user is in).
-        
+
         This method may send a whois to the server, in which case it looks for
         an IRC 330 command back from the server indicating the user's authname
 
@@ -515,7 +515,7 @@ class Auth(command.CommandPluginSuperclass):
 
         globalperms = perms_map.pop(None, set())
         if globalperms:
-            event.reply("Default global permissions: %s" % 
+            event.reply("Default global permissions: %s" %
                     ", ".join(globalperms))
         else:
             event.reply("No global permissions")
@@ -535,7 +535,7 @@ class Auth(command.CommandPluginSuperclass):
                 "auth.edit.group.{0}".format(group), None)):
             event.reply("You do not have permissions to modify that group")
             return
-        
+
         permlist = self.config['groups'][user]
         if group in permlist:
             event.reply("User {0} is already a member of group {1}".format(
@@ -551,7 +551,7 @@ class Auth(command.CommandPluginSuperclass):
         gd = match.groupdict()
         user = gd['user']
         group = gd['group']
-        
+
         if not (yield self._has_permission(event.user,
                 "auth.edit.group.{0}".format(group), None)):
             event.reply("You do not have permissions to modify that group")
@@ -578,7 +578,7 @@ class Auth(command.CommandPluginSuperclass):
                     "auth.edit.group.{0}".format(group), None)):
                 event.reply("You do not have permissions to view that group")
                 return
-            
+
             members = set()
             for user, groups in self.config['groups'].items():
                 if group in groups:

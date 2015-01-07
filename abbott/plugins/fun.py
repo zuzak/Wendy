@@ -124,7 +124,7 @@ class Reverse(CommandPluginSuperclass):
     def reverse(self, event, match):
         self.on = not self.on
         event.reply("Polarity reversed!")
-        
+
     def on_middleware_irc_do_msg(self, event):
 
         if self.on:
@@ -190,4 +190,4 @@ class Sneeze(BotPlugin):
                         message=message,
                         )
                     )
-                        
+

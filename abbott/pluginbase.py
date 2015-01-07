@@ -36,7 +36,7 @@ class PluginConfig(UserDict):
 
 
 class PluginBoss(object):
-    """Handles the loading and unloading of plugins and the reading 
+    """Handles the loading and unloading of plugins and the reading
     of config files and storage of configuration.
 
     There is one instance of this class per bot, and every plugin instance has
@@ -55,7 +55,7 @@ class PluginBoss(object):
         elif not os.path.isdir(self._configdir):
             print("The config parameter should be a directory. Please make the necessary adjustments")
             sys.exit(1)
-        
+
         try:
             self._load()
         except IOError:

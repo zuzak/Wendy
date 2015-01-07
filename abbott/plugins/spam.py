@@ -15,7 +15,7 @@ from ..transport import Event
 
 class Spam(CommandPluginSuperclass):
     """A plugin that watches the configured channel for spammers/flooders.
-    
+
     The algorithm is pretty simple: if a user says more than a certain number
     of lines within a certain number of seconds, they are quieted temporarily.
     The values for number of lines and seconds are configurable. Also, tracked
@@ -87,7 +87,7 @@ class Spam(CommandPluginSuperclass):
                 callback=self.setduration,
                 helptext="Sets the duration of the quiet when a user spams on this channel",
                 )
-    
+
     @require_channel
     def spamon(self, event, match):
         channel = event.channel
@@ -104,7 +104,7 @@ class Spam(CommandPluginSuperclass):
         self.config['channel'] = None
         event.reply("Spam detection is now off in {0}.".format(channel))
         self.config.save()
-        
+
     @defer.inlineCallbacks
     def on_event_irc_on_privmsg(self, event):
         super(Spam, self).on_event_irc_on_privmsg(event)
@@ -128,7 +128,7 @@ class Spam(CommandPluginSuperclass):
         # This will always be at least 1
         linessaid = sum(1 for t in self.lastlines if
                 t[0] == hostmask and t[1] + LS_THRESH[1] > now
-                ) 
+                )
 
         # count how many lines from the current user match the current line in
         # the last few seconds. This will always be at least 1

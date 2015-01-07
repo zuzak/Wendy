@@ -230,7 +230,7 @@ class IRCAdmin(EventWatcher, CommandPluginSuperclass):
         super(IRCAdmin, self).start()
 
         self.started = True
-        
+
         # Start the timers for modes we need to set later. Don't start the
         # timers right away, though, because we're likely still connecting to
         # the server. This is a bit of a hack; a better way would be to detect
@@ -390,7 +390,7 @@ class IRCAdmin(EventWatcher, CommandPluginSuperclass):
                 callback=self.bans,
                 helptext="Lists the time until the given mask is unbanned.",
                 )
-                
+
 
     @defer.inlineCallbacks
     def _nick_to_hostmask(self, nick):
@@ -922,7 +922,7 @@ class IRCAdmin(EventWatcher, CommandPluginSuperclass):
     def _do_modederequest(self, channel, mode, hostmask, delay):
         """Note the *de* in _do_mode*de*request.
         For info see _do_moderequest()
-        
+
         Difference between this method and _do_moderequest: do_moderequest
         takes a *duration*; it always applies the requested mode and then
         un-does that after the duration.
@@ -1041,7 +1041,7 @@ class IRCAdmin(EventWatcher, CommandPluginSuperclass):
     def bans(self, event, match):
         """A user has issued the bans command, a query to see who is banned and
         for how long.
-        
+
         """
         reply = event.reply
 
@@ -1080,7 +1080,7 @@ class IRCAdmin(EventWatcher, CommandPluginSuperclass):
                 mode=later.mode,
                 mask=later.mask,
                 when=when))
-        
+
 
 
 class IRCTopic(CommandPluginSuperclass):

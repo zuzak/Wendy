@@ -69,7 +69,7 @@ class PyPyTwistedSandboxProtocol(ProcessProtocol, object):
 
     def errReceived(self, text):
         self.__error.write(text)
-        
+
     @defer.inlineCallbacks
     def outReceived(self, text):
         self.__instream.write(text)
@@ -340,7 +340,7 @@ class PyExec(CommandPluginSuperclass):
                 helptext="Run a python statement and print the result",
                 callback=self.run_command,
                 )
-        
+
     def reload(self):
         super(PyExec, self).reload()
         if "inputlimit" not in self.config:
@@ -354,7 +354,7 @@ class PyExec(CommandPluginSuperclass):
         pypy_root = self.config['pypy_root']
 
         sandbox_binary = os.path.join(pypy_root, "pypy-sandbox")
-        
+
         # Create the sandbox protocol class we'll be using
         class Sandbox(PyPyTwistedVirtualizedSandboxedProtocol, PyPyTwistedIOSandboxedProtocol):
             virtual_cwd = "/"
