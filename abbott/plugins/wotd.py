@@ -30,6 +30,37 @@ def find_time_until(hour_minute):
     timeuntil = targetdt - datetime.datetime.now()
     return timeuntil
 
+
+def de_dupe_words(words):
+    return set([word.lower() for word in words])
+
+
+def is_parrot(words, parrot_words, match_ratio=0.6):
+    """ Checks whether the given words are similar to any of the existing winlines. Returns true if more than `match_ratio` of words are similar.
+    :param words: Words the user has said
+    :param match_ratio: What percentage of the words should be included in previous winlines for this to count as a match.
+    :return: Boolean
+    """
+
+    # De-duplicate the words list
+    words = de_dupe_words(words)
+
+    # Check if these words match any previous winlines.
+    for win_words in parrot_words:
+        # De-duplicate the win line word list
+        win_words = de_dupe_words(win_words)
+
+        # Get words shared between the two lists
+        matches = win_words & words
+
+        # Calculate the match ratio and see if we should consider this line a parrot or not
+        if float(len(matches)) / float(len(words)) > match_ratio:
+            return True
+
+    # If we made it all the way down here then no parrots were found.
+    return False
+
+
 class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
     REQUIRES = ["ircop.OpProvider", "ircutil.Names"]
     DEFAULT_CONFIG = {
@@ -68,7 +99,7 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
         self.lastwintime = 0
         self.winlines = []
 
-        wotdgroup = self.install_cmdgroup(
+            wotdgroup = self.install_cmdgroup(
                 grpname="wotd",
                 permission="wotd.configure",
                 helptext="Woice of the Day configuration commands",
@@ -204,7 +235,7 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
         yield self.wait_for(timeout=1)
 
         if event.channel == self.config["channel"]:
-            
+
             nick = event.user.split("!")[0]
 
             if nick in self.config['winners']:
@@ -213,8 +244,8 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
             words = set(x.strip(string.punctuation) for x in event.message.lower().split())
             if self.config['theword'] in words:
 
-                if (event.message.lower() != self.config['theword'] and 
-                        event.message.lower() in self.winlines and
+                if (event.message.lower() != self.config['theword'] and
+                        is_parrot(words, self.winlines) and
                         time.time() - self.lastwintime < 60*2):
                     # if you repeated a message verbatim by a winner from the
                     # last 2 minutes...
@@ -245,7 +276,7 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
                     # involving people getting kicked for lines that look
                     # innocent
                     self.lastwintime = time.time()
-                    self.winlines.append(event.message.lower())
+                    self.winlines.append(words)
                     yield self.transport.issue_request("ircop.voice", event.channel, nick)
                     if not lastwin:
                         self.transport.send_event(Event("irc.do_notice",
@@ -258,7 +289,6 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
                             user=event.channel,
                             message="That’s all the hats! The word of the day was “{0}”. Congrats to our winners. Until tomorrow…".format(self.config['theword']),
                             ))
-
 
     def on_event_irc_on_nick_change(self, event):
         oldnick = event.oldnick
