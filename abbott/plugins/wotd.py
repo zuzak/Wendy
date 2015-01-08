@@ -99,7 +99,7 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
         self.lastwintime = 0
         self.winlines = []
 
-            wotdgroup = self.install_cmdgroup(
+        wotdgroup = self.install_cmdgroup(
                 grpname="wotd",
                 permission="wotd.configure",
                 helptext="Woice of the Day configuration commands",
