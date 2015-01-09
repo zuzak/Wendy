@@ -124,6 +124,7 @@ I'll create a new one for you now""")
                         'server': server,
                         'port': port,
                         'nick': nick,
+                        'realname': 'Bot operated by {0}'.format(admin),
                         'channels': [channel],
                         # REMOVE is supported on freenode. I don't know about any others.
                         'remove': "freenode" in server,
@@ -149,7 +150,7 @@ I'll create a new one for you now""")
     def save(self):
         """Saves the master config. Use plugin.config.save() to save plugin
         configs
-        
+
         """
         with open(self._filename, 'w') as output_file_handle:
             json.dump(self.config, output_file_handle, indent=4)
@@ -161,16 +162,16 @@ I'll create a new one for you now""")
 
     def load_plugin(self, plugin_name):
         """Loads the named plugin.
-        
+
         plugin_name is expected to be in the form A.B where A is the module and
         B is the class. This module is expected to live in the plugins package.
-        
+
         """
         modulename, classname = plugin_name.split(".")
         module = __import__("abbott.plugins."+modulename, fromlist=[classname])
-        
+
         pluginclass = getattr(module, classname)
-        
+
         plugin = pluginclass(plugin_name, self._transport, self)
         try:
             plugin.start()
@@ -195,7 +196,7 @@ I'll create a new one for you now""")
             old_config = self.config['plugin_config'][plugin_name]
         except KeyError:
             old_config = {}
-        
+
         plugin_config_path = os.path.join(self._configdir, plugin_name)+".json"
 
         if not os.path.exists(plugin_config_path):
@@ -240,7 +241,7 @@ class BotPlugin(object):
     def reload(self):
         """This is called to indicate the configuration has changed and the
         plugin should make any necessary changes to its runtime.
-        
+
         This method is called by the constructor, and anytime an external event
         indicates the configuration has changed.
 
@@ -318,18 +319,18 @@ class EventWatcher(object):
     callers don't have to.
 
     To use it, define your plugin with this mixin::
-    
+
         class MyPlugin(EventWatcher, BotPlugin):
             pass
 
         class AnotherPlugin(EventWatcher, CommandPluginSuperclass):
             pass
-    
+
     Then, in a method, call self.wait_for(), which will return a deferred
     object. For increased usefulness, methods should be decorated with
     defer.inlineCallbacks and you should yield the returned deferred, which
     will suspend execution of the method until a matching event comes in.
-    
+
     For example, consider this plugin that responds to someone saying "hello".
     With this mixin, the entire plugin could be implemented in the start()
     method::
@@ -342,12 +343,12 @@ class EventWatcher(object):
                 while True:
                     event = (yield self.wait_for(
                             Event("irc.on_privmsg", message="hello")))
-                
+
                     self.transport.send_event(Event("irc.do_msg",
                             user=event.channel,
                             message="hi!",
                             ))
-    
+
     See docs on wait_for() for options and more info on how to use it.
 
     Note that if you use functionality in this mixin, you should take care to
