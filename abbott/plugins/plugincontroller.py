@@ -9,6 +9,7 @@ from twisted.python import log
 
 from ..command import CommandPluginSuperclass
 
+
 class PluginController(CommandPluginSuperclass):
 
     def start(self):
@@ -121,8 +122,8 @@ class PluginController(CommandPluginSuperclass):
             else:
                 log.msg("%s unloaded" % plugin_name)
 
-        module = namedModule("abbott.plugins." + module_name)
         try:
+            module = namedModule("abbott.plugins." + module_name)
             reload(module)
         except Exception:
             event.reply("There was an error reloading the module. None of the plugins were reloaded. Check the log")
