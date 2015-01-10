@@ -30,6 +30,9 @@ class Spam(CommandPluginSuperclass):
             "channel": None,
             "msg": "You're talking too fast. Please be mindful and don't flood the channel.",
             "duration": 30,
+            "exclude_ops": True,  # Exclude ops from being analysed
+            "exclude_voiced": True,  # Exclude voiced users from being analysed
+
             # X Lines said within Y seconds
             "LS_THRESH": (6, 7),
 
@@ -87,7 +90,7 @@ class Spam(CommandPluginSuperclass):
                 callback=self.setduration,
                 helptext="Sets the duration of the quiet when a user spams on this channel",
                 )
-    
+
     @require_channel
     def spamon(self, event, match):
         channel = event.channel
@@ -138,6 +141,18 @@ class Spam(CommandPluginSuperclass):
                 )
 
         if linessaid >= LS_THRESH[0] or repeats >= REPEAT_THRESH[0]:
+            kick_required = False
+
+            # If the user is an op, and we're allowing ops to spam, then return here.
+            names = (yield self.transport.issue_request("irc.names", channel))
+            if u"@" + nick in names or u"+" + nick in names:
+                kick_required = True
+                if self.config.get('exclude_ops') is True and u"@" + nick in names:
+                    return
+
+                if self.config.get('exclude_voiced') is True and u"+" + nick in names:
+                    return
+
             log.msg("A line by {} was detected as spam. {}/{} lines said within {} seconds, {}/{} repeat lines said within {} seconds".format(nick, linessaid, LS_THRESH[0], LS_THRESH[1], repeats, REPEAT_THRESH[0],REPEAT_THRESH[1]))
 
             # If they manage to get another few lines in before they're quited,
@@ -147,8 +162,11 @@ class Spam(CommandPluginSuperclass):
 
             # serve punishment:
             try:
-                yield self.transport.issue_request("ircadmin.timedquiet",
-                        channel, nick, self.config['duration'])
+                # Users with voice or OP can talk over being quieted, so we would need to kick them.
+                if kick_required is True:
+                    yield self.transport.issue_request("ircop.kick", channel, nick, self.config['msg'])
+                else:
+                    yield self.transport.issue_request("ircadmin.timedquiet", channel, nick, self.config['duration'])
             except (ircop.OpFailed, ValueError, ircutil.NoSuchNick) as e:
                 log.msg("Was going to quiet user {0} for flooding but I got an error: {1}".format(nick, e))
 
@@ -169,6 +187,7 @@ class Spam(CommandPluginSuperclass):
         self.config['duration'] = duration
         self.config.save()
         event.reply("Quiet duration set to {0} seconds".format(duration))
+
 
 class ServerAd(pluginbase.EventWatcher, CommandPluginSuperclass):
     REQUIRES = ["admin.IRCAdmin"]
