@@ -76,7 +76,7 @@ class IRCWhois(CommandPluginSuperclass):
             # Start a new one
             if self.currentwhois:
                 log.msg("Error: Got a RPL_WHOISUSER but we're already in a whois!")
-            nick = params[1]
+            nick = params[1].lower()  # Use lowercase nick otherwise we can't marry the server response to our request, if we provided a name in the wrong case.
             self.currentwhois = nick
             self.currentinfo = {command: params[1:]}
 
@@ -90,7 +90,7 @@ class IRCWhois(CommandPluginSuperclass):
             self.currentwhois = None
 
         elif command == "ERR_NOSUCHNICK":
-            nick = params[1]
+            nick = params[1].lower()
             for callback in self.pendingwhoises.pop(nick):
                 callback.errback(NoSuchNick(params[2]))
 
@@ -98,6 +98,7 @@ class IRCWhois(CommandPluginSuperclass):
             self.currentinfo[command] = params[1:]
 
     def on_request_irc_whois(self, nick):
+        nick = nick.lower()  # Use lowercase nick otherwise we can't marry the server response to our request, if we provided a name in the wrong case.
         d = defer.Deferred()
         self.pendingwhoises[nick].add(d)
 
@@ -212,7 +213,7 @@ class Names(CommandPluginSuperclass):
 
         event.reply("NAMES info for {0}: {1}".format(channel, info))
 
-        
+
 class ReplyInserter(CommandPluginSuperclass):
     """This plugin's function is to insert a reply() function to each incoming
     irc.on_privmsg event. It is required for a lot of functionality, including
@@ -282,7 +283,7 @@ class ReplyInserter(CommandPluginSuperclass):
                 eventname = "irc.do_msg"
 
             nick = event.user.split("!",1)[0]
-            
+
             # In addition to if it was explicitly requested, send the response
             # "direct" if the incoming response was sent direct to us
             direct = direct or event.direct
@@ -403,7 +404,7 @@ class ChanMode(EventWatcher, BotPlugin):
 
         reply = (yield self.wait_for(Event("irc.on_unknown", command="RPL_CHANNELMODEIS"),
                 timeout=5))
-        
+
         if not reply:
             raise Exception("no response from server")
 
