@@ -105,6 +105,14 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
                 helptext="Woice of the Day configuration commands",
                 )
         wotdgroup.install_command(
+                cmdname="settime",
+                cmdusage="<hour:minute>",
+                argmatch=r"(?P<hour>\d+)(?:[:](?P<minute>\d+))$",
+                callback=self.settime,
+                helptext="Sets which hour the drawing will happen, in the current locale",
+                )
+
+        wotdgroup.install_command(
                 cmdname="reset",
                 callback=self.reset,
                 helptext="Resets the word of the day right now",
@@ -160,6 +168,26 @@ class WordOfTheDay(EventWatcher, CommandPluginSuperclass):
             towait = IDLE_TIME - (now - self.lastspoken)
             log.msg("Was going to reset WOTD but the channel is active. Waiting %s seconds and trying again"%towait)
             self.timer = reactor.callLater(towait, self._timer_up)
+
+    @require_channel
+    def settime(self, event, match):
+        hour = int(match.groupdict()['hour'])
+        minute = int(match.groupdict().get('minute', None) or 0)
+        if hour < 0 or hour > 23:
+            event.reply("What kind of hour is that?")
+            return
+        if minute < 0 or minute > 59:
+            event.reply("What kind of minute is that?")
+            return
+        self.config['hour'] = (hour, minute)
+        self.config.save()
+        self._set_timer()
+
+        event.reply("WOTD reset {3} happen at {0:02d}:{1:02d}, which is in {2} seconds".format(
+            hour, minute,
+            find_time_until((hour,minute)).seconds,
+            "will" if self.config['channel'] else "would",
+            ))
 
     @require_channel
     def reset(self, event, match):

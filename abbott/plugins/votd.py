@@ -251,7 +251,7 @@ class VoiceOfTheDay(EventWatcher, CommandPluginSuperclass):
         self.config.save()
         self._set_timer()
 
-        event.reply("VOTD drawing {3} happen at {0}:{1}, which is in {2} seconds".format(
+        event.reply("VOTD drawing {3} happen at {0:02d}:{1:02d}, which is in {2} seconds".format(
             hour, minute,
             find_time_until((hour,minute)).seconds,
             "will" if self.config['channel'] else "would",
